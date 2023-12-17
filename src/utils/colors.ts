@@ -10,7 +10,6 @@ export const colors = {
   "pastel_pink": "#FFB6E1",
   "pastel_mint": "#B6FFD8",
   "pastel_peach": "#FFD8D8",
-  "pastel_lavender": "#E1B6FF"
 }
 
 export function getRandomColor(excludeColors = [] as string[]) {

@@ -2,15 +2,10 @@ import useNotebookControl from "@/hooks/useNotebookControl";
 import { Notebook } from "@/types";
 import { motion } from 'framer-motion';
 import moment from "moment";
-import { useMemo } from "react";
 import { Button } from "./ui/button";
 
 export default function NotebookButton({ notebook }: { notebook: Notebook }) {
   const { openNotebook, removeNotebook, exportNotebook } = useNotebookControl(notebook.id)
-
-  const f_lastUpdatedAt = useMemo(() => {
-    return moment(notebook.lastUpdatedAt).fromNow()
-  }, [notebook.lastUpdatedAt])
 
   return (
     <motion.li
@@ -24,8 +19,8 @@ export default function NotebookButton({ notebook }: { notebook: Notebook }) {
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: 0.8, opacity: 0 }}
     >
-      <motion.p>{notebook.title}</motion.p>
-      <motion.p>{f_lastUpdatedAt}</motion.p>
+      <motion.p className="text-3xl font-serif">{notebook.title}</motion.p>
+      <motion.p className="text-sm opacity-60">Last Access: {moment(notebook.lastUpdatedAt).fromNow()}</motion.p>
 
       <div className="flex gap-3 self-end">
         <Button

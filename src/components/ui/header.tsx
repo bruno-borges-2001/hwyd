@@ -18,7 +18,7 @@ export default function Header() {
       </motion.div>
       <motion.div className="grow h-full w-full" />
       <motion.div className="flex gap-2">
-        <Button onClick={createNotebook} variant="default" className="whitespace-nowrap">
+        <Button onClick={() => createNotebook()} variant="default" className="whitespace-nowrap">
           Create Notebook
         </Button>
         <ImportNotebookDialog>

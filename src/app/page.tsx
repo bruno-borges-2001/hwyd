@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <main className="flex flex-col max-h-[100dvh] overflow-hidden">
       <AnimatePresence>
-        <MainLayout>
+        <MainLayout className="p-8">
           <Notebook />
         </MainLayout>
       </AnimatePresence>

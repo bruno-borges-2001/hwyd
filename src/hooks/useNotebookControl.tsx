@@ -4,11 +4,14 @@ import moment from "moment"
 
 export default function useNotebookControl(id: string) {
   const {
+    currentNotebook,
     setCurrentNotebookId,
     updateNotebook,
     removeNotebook: _removeNotebook,
     exportNotebook: _exportNotebook
   } = useDataContext()
+
+  const isOpen = currentNotebook?.id === id
 
   const { toast } = useToast()
 
@@ -48,5 +51,5 @@ export default function useNotebookControl(id: string) {
     }
   }
 
-  return { openNotebook, closeNotebook, removeNotebook, exportNotebook }
+  return { isOpen, openNotebook, closeNotebook, removeNotebook, exportNotebook }
 }

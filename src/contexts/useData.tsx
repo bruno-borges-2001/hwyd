@@ -1,5 +1,5 @@
 import { $notebooks } from "@/atoms/notebooks";
-import { Notebook } from "@/types";
+import { Notebook, NotebookFormFields } from "@/types";
 import { getRandomColor } from "@/utils/colors";
 import { useStore } from "@nanostores/react";
 import moment from "moment";
@@ -7,7 +7,7 @@ import { createContext, useContext, useMemo } from "react";
 import { StringParam, useQueryParam, withDefault } from "use-query-params";
 import { v4 } from 'uuid';
 
-type UpdateActionCallback<T> = (prev: T) => T
+type UpdateActionCallback<T> = (prev: T) => Notebook
 
 type DataContextType = {
   notebooks: Notebook[]
@@ -15,8 +15,8 @@ type DataContextType = {
   currentNotebook: Notebook | null
   setCurrentNotebookId: (newValue: string | null) => void
 
-  createNotebook: (value?: Omit<Notebook, 'id'>) => void,
-  updateNotebook: (id: string, value: Notebook | UpdateActionCallback<Notebook>) => void
+  createNotebook: (value?: NotebookFormFields) => string,
+  updateNotebook: (id: string, value: NotebookFormFields | UpdateActionCallback<NotebookFormFields>) => void
   removeNotebook: (id: string) => void
 
   exportNotebook: (id: string) => string | undefined
@@ -33,19 +33,23 @@ export function DataContextProvider({ children }: { children: React.ReactNode })
     return notebooks?.find((el) => el.id === currentNotebookId) || null
   }, [notebooks, currentNotebookId])
 
-  const createNotebook = (value?: Omit<Notebook, 'id'>) => {
+  const createNotebook = (value?: NotebookFormFields) => {
+    const newId = v4()
     const newNotebook: Notebook = {
-      id: v4(),
+      id: newId,
       title: 'Test',
+      author: 'this author',
       lastUpdatedAt: moment().format(),
-      color: getRandomColor([notebooks.at(-1)?.color ?? ""]),
-      ...(value ?? {})
+      ...(value ?? {}),
+      color: value?.color ?? getRandomColor([notebooks.at(-1)?.color ?? ""]),
     }
 
     $notebooks.set([...notebooks, newNotebook])
+
+    return newId
   }
 
-  const updateNotebook = (id: string, value: Notebook | UpdateActionCallback<Notebook>) => {
+  const updateNotebook = (id: string, value: NotebookFormFields | UpdateActionCallback<NotebookFormFields>) => {
     const notebookIdx = notebooks.findIndex(n => n.id === id)
 
     if (notebookIdx < 0) return
@@ -53,7 +57,9 @@ export function DataContextProvider({ children }: { children: React.ReactNode })
     $notebooks.set(
       notebooks.with(
         notebookIdx,
-        typeof value === 'function' ? value(notebooks[notebookIdx]) : value
+        typeof value === 'function'
+          ? value(notebooks[notebookIdx])
+          : { ...value, id, lastUpdatedAt: moment().format() }
       )
     )
   }
